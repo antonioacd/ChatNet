@@ -18,27 +18,16 @@ import java.util.ArrayList;
  *
  */
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerHolder>{
+public class RecyclerAdapterConver extends RecyclerView.Adapter<RecyclerAdapterConver.RecyclerHolder>{
 
     public ArrayList<String> listaMensajes;
 
     Context contexto;
 
     //Constructor de RecyclerAdapter
-    public RecyclerAdapter(Context contexto) {
+    public RecyclerAdapterConver(Context contexto) {
         this.contexto = contexto;
         listaMensajes = new ArrayList<String>();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        String mensaje = listaMensajes.get(position);
-
-        if (mensaje.substring(0,1).equals("1")) {
-            return 1;
-        } else {
-            return 2;
-        }
     }
 
     //Creamos la vista de nuestro RecyclerAdapter
@@ -48,13 +37,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         RecyclerHolder recyclerHolder;
 
-        if (viewType == 1) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_mensaje,parent, false);
-            recyclerHolder = new RecyclerHolder(view);
-        } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_mensaje2,parent, false);
-            recyclerHolder = new RecyclerHolder(view);
-        }
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_mensaje,parent, false);
+        recyclerHolder = new RecyclerHolder(view);
 
         return recyclerHolder;
     }
@@ -65,12 +49,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         String mensaje = listaMensajes.get(position);
 
-        int viewType = getItemViewType(position);
-        if (viewType == 1) {
+        if (mensaje.substring(0,1).equals("1")) {
             holder.mensajeEnviado.setText(mensaje.substring(1));
+            holder.mensajeRecibido.setVisibility(View.GONE);
         } else {
             holder.mensajeRecibido.setText(mensaje.substring(1));
+            holder.mensajeEnviado.setVisibility(View.GONE);
         }
+
+        holder.setIsRecyclable(false);
     }
 
     @Override

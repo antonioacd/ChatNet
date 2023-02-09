@@ -4,40 +4,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondodepantalla"
     tools:context=".activity.MainActivity">
 
     <Button
         android:id="@+id/btnEnviar"
-        android:layout_width="42dp"
-        android:layout_height="47dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:text=">"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.891"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rVMensajes"
-        app:layout_constraintVertical_bias="0.452" />
-
-    <EditText
-        android:id="@+id/txtMiTexto"
-        android:layout_width="259dp"
-        android:layout_height="42dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnEnviar"
-        app:layout_constraintHorizontal_bias="0.369"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rVMensajes"
-        app:layout_constraintVertical_bias="0.439" />
+        app:layout_constraintStart_toEndOf="@+id/txtMiTexto"
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rVMensajes"
         android:layout_width="0dp"
-        android:layout_height="525dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintHorizontal_bias="0.541"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.454" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8125855" />
+
+    <EditText
+        android:id="@+id/txtMiTexto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.208"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline4"
+        app:layout_constraintVertical_bias="0.489" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,14 +5,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.chatacd.R;
-import com.example.chatacd.adapter.RecyclerAdapter;
+import com.example.chatacd.adapter.RecyclerAdapterConver;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -23,14 +22,13 @@ import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView mensajes;
     EditText mensaje_env;
     Button btnEnviar;
     String conversacion;
     String mensaje;
 
     RecyclerView rV;
-    RecyclerAdapter recAdapter;
+    RecyclerAdapterConver recAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
         mensaje_env = (EditText) findViewById(R.id.txtMiTexto);
         btnEnviar = (Button) findViewById(R.id.btnEnviar);
         conversacion = "";
-        mensaje = "";
+        mensaje = null;
 
-        recAdapter = new RecyclerAdapter(this);
+        recAdapter = new RecyclerAdapterConver(this);
 
         //Creamos un LinearLayout para establecer el Layout del recyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
@@ -58,9 +56,16 @@ public class MainActivity extends AppCompatActivity {
                 enviarMensaje();
             }
         });
-
         recibirMensaje();
 
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_ENTER){
+            enviarMensaje();
+        }
+        return true;
     }
 
     public void recibirMensaje(){
@@ -75,9 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         DataInputStream dis = new DataInputStream(misocket.getInputStream());
 
                         mensaje = dis.readUTF();
-
                         recAdapter.listaMensajes.add("2" + mensaje);
-                        rV.scrollToPosition(recAdapter.listaMensajes.size() - 1);
 
                         misocket.close();
                     }
@@ -89,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
         hilo1.start();
         recAdapter.notifyDataSetChanged();
+        rV.scrollToPosition(recAdapter.listaMensajes.size()+1);
     }
-
 
     public void enviarMensaje(){
 
@@ -103,14 +106,10 @@ public class MainActivity extends AppCompatActivity {
                     DataOutputStream dos = new DataOutputStream(misocket.getOutputStream());
                     String mensaje = mensaje_env.getText().toString();
 
-                    Log.d("Mensaje", "Entra");
+                    recAdapter.listaMensajes.add("1" +mensaje);
                     dos.writeUTF(mensaje);
 
-                    //conversacion = mensajes.getText() + " \n" + "Mensaje enviado: " + mensaje;
-
-                    recAdapter.listaMensajes.add("1" +mensaje);
-                    rV.scrollToPosition(recAdapter.listaMensajes.size() - 1);
-                    //mensajes.setText(conversacion);
+                    mensaje_env.setText(" ");
 
                     dos.close();
 
@@ -123,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         });
         hilo2.start();
         recAdapter.notifyDataSetChanged();
+        rV.scrollToPosition(recAdapter.listaMensajes.size()+1);
     };
 
 
