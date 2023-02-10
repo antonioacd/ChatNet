@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.Html;
 import android.util.Log;
 
 import com.example.chatacd.model.Contacto;
@@ -101,27 +100,21 @@ public class DBAccess extends SQLiteOpenHelper {
         values.put(IP_COLUMN, ip);
         values.put(IMAGEN_COLUMN, imgPerfil);
         Log("Datos insertados");
-        //Todo 4.2. Insertamos a través del método insert, cuyos parametro son:
-        //todo -> nombre de la tabla
-        //todo -> nullColumnHack permite indicar si hay una columna cuyo valor pueda ser nulo.
-        //todo -> valores asociados a la inserción.
 
         result = db.insert(DB_TABLE_NAME,null,values);
+
+        Log.d("Result: ", ""+result);
 
         //Se cierra la conexión de la base de datos
         db.close();
 
         return result;
-
     }
 /*
     public Usuario getDataUser(String usuario){
 
         SQLiteDatabase db = this.getReadableDatabase();
         Usuario u = null;
-        //Todo 5.2. Realizamos la consulta a través del método 'query', cuyo significado de los
-        // todo-> parámetros tenemos en los apuntes. Este método devuelve un cursor que nos
-        // todo-> permite recorrer las tuplas del resultado.
         String[] cols = new String[]{NOMBRE_COLUMN ,UMENSAJE_COLUMN ,IP_COLUMN, };
 
         //Un cursor es un tipo de dato que se mueve entre los registros devueltos por una consulta de una base de datos.
@@ -173,7 +166,7 @@ public class DBAccess extends SQLiteOpenHelper {
 
     }
 
-        public ArrayList<Contacto> getAllUsers(){
+        public ArrayList<Contacto> getAllContacts(){
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Contacto> listaContactos = new ArrayList<>();
 
@@ -186,14 +179,18 @@ public class DBAccess extends SQLiteOpenHelper {
 
             do{
 
-                Contacto cont = new Contacto(c.getString(0), c.getString(1), c.getString(2), c.getString(3));
+                Contacto cont = new Contacto(c.getString(2), c.getString(0), c.getString(1), c.getString(3));
 
                 listaContactos.add(cont);
 
             }while(c.moveToNext());
         }
 
+            Log.d("ListaCont", listaContactos.toString());
+
         return listaContactos;
+
+
     }
 
     public void Log(String msg){

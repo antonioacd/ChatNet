@@ -1,11 +1,13 @@
 package com.example.chatacd.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,11 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
-import com.bumptech.glide.Glide;
 import com.example.chatacd.R;
 import com.example.chatacd.adapter.RecyclerAdapterChats;
-import com.example.chatacd.adapter.RecyclerAdapterConver;
 import com.example.chatacd.model.Contacto;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChatsActivity extends AppCompatActivity {
 
@@ -33,10 +37,16 @@ public class ChatsActivity extends AppCompatActivity {
 
     AlertDialog dialog;
 
+    int indice;
+
+    ArrayList<Contacto> listaTemp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chats);
+
+        ArrayList<Contacto> listaChats;
 
         btnAgregar = (Button) findViewById(R.id.btnAgregar);
 
@@ -51,13 +61,48 @@ public class ChatsActivity extends AppCompatActivity {
         //Implementamos el recyclerAdapter en el recyclerView
         rVChats.setAdapter(recAdapterChat);
 
+        dbController = new DBAccess(this);
+
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                agregarContacto();
+
             }
         });
 
+        //Cargamos los contactos
+        cargarContactos();
+
+        recAdapterChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Capturamos el indice del elemento seleccionado
+                indice = rVChats.getChildAdapterPosition(view);
+
+                Log.d("Pulsado", ""+indice);
+
+                //Iniciamos la nueva actividad, que seria la vista maestra del elemento
+                Intent i = new Intent(ChatsActivity.this, MainActivity.class);
+                //Introducimos comoo srting extra el id de elemento seleccionado, para mas tarde
+                //en esta clase de vista maestra poder realizar una consulta a la appi sobre
+                //este mismo elemento y no tener que cargar todos de nuevo
+                i.putExtra("nombre", recAdapterChat.listaChats.get(indice).getNombre());
+                i.putExtra("ip", recAdapterChat.listaChats.get(indice).getIp());
+                startActivity(i);
+
+                //Indicamos que se ha seleccionado un elemento de la vista
+                view.setSelected(true);
+            }
+        });
+
+    }
+
+    public void cargarContactos(){
+
+        recAdapterChat.listaChats = dbController.getAllContacts();
+        recAdapterChat.notifyDataSetChanged();
     }
 
     public void agregarContacto(){
@@ -75,23 +120,24 @@ public class ChatsActivity extends AppCompatActivity {
 
         Context context = this;
 
-        progressDrawable = new CircularProgressDrawable(this);
-        progressDrawable.setStrokeWidth(10f);
-        progressDrawable.setStyle(CircularProgressDrawable.LARGE);
-        progressDrawable.setCenterRadius(30f);
-        progressDrawable.start();
-
         aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Contacto c = new Contacto(eIp.getText().toString(), eNombre.getText().toString(), null, "https://www.softzone.es/app/uploads-softzone.es/2018/04/guest.png");
+                Contacto c = new Contacto(eIp.getText().toString(), eNombre.getText().toString(), "Hola", "https://www.softzone.es/app/uploads-softzone.es/2018/04/guest.png");
 
-                recAdapterChat.listaChats.add(c);
+                //Llamamos al metodo insert para añadir el usuario a la base de datos
+                if(dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg()) != -1){
 
-                recAdapterChat.notifyDataSetChanged();
+                    recAdapterChat.insertarItem(c);
 
-                dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg());
+                    recAdapterChat.notifyDataSetChanged();
+
+                    dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg());
+
+                }else{
+                    Toast.makeText(getApplicationContext(), "Esa id ya esta registrada", Toast.LENGTH_LONG).show();
+                }
 
                 dialog.dismiss();
             }

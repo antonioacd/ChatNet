@@ -45,4 +45,14 @@ public class Contacto {
     public void setIp(String ip) {
         this.ip = ip;
     }
+
+    @Override
+    public String toString() {
+        return "Contacto{" +
+                "nombre='" + nombre + '\'' +
+                ", ultimoMensaje='" + ultimoMensaje + '\'' +
+                ", img='" + img + '\'' +
+                ", ip='" + ip + '\'' +
+                '}';
+    }
 }
