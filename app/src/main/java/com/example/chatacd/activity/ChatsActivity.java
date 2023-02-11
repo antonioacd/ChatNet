@@ -79,8 +79,6 @@ public class ChatsActivity extends AppCompatActivity {
                 //Capturamos el indice del elemento seleccionado
                 indice = rVChats.getChildAdapterPosition(view);
 
-                Log.d("Pulsado", ""+indice);
-
                 //Iniciamos la nueva actividad, que seria la vista maestra del elemento
                 Intent i = new Intent(ChatsActivity.this, MainActivity.class);
                 //Introducimos comoo srting extra el id de elemento seleccionado, para mas tarde
@@ -119,23 +117,34 @@ public class ChatsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Contacto c = new Contacto(eIp.getText().toString(), eNombre.getText().toString(), "Hola", "https://www.softzone.es/app/uploads-softzone.es/2018/04/guest.png");
-
-                //Llamamos al metodo insert para añadir el usuario a la base de datos
-                if(dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg()) != -1){
-
-                    recAdapterChat.listaChats.add(c);
-
-                    recAdapterChat.notifyDataSetChanged();
-
-                    dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg());
-
+                if (eIp.getText().toString().isEmpty() || eNombre.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(), "Debe rellenar todos los campos", Toast.LENGTH_LONG).show();
                 }else{
+                    Contacto c = new Contacto(eIp.getText().toString(), eNombre.getText().toString(), "Hola", "https://www.softzone.es/app/uploads-softzone.es/2018/04/guest.png");
 
-                    Toast.makeText(getApplicationContext(), "Esa id ya esta registrada", Toast.LENGTH_LONG).show();
+                    //Llamamos al metodo insert para añadir el usuario a la base de datos
+                    if(dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg()) != -1){
 
+                        recAdapterChat.listaChats.add(c);
+
+                        recAdapterChat.notifyDataSetChanged();
+
+                        dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg());
+
+                    }else{
+
+                        Toast.makeText(getApplicationContext(), "Esa id ya esta registrada", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    dialog.dismiss();
                 }
+            }
+        });
 
+        cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 dialog.dismiss();
             }
         });
@@ -146,6 +155,5 @@ public class ChatsActivity extends AppCompatActivity {
 
         dialog.show();
     }
-
 
 }

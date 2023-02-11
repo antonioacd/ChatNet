@@ -45,6 +45,7 @@
         android:inputType="textPersonName"
         android:textColor="#FFFFFF"
         android:background="@drawable/formato_caja"
+        android:paddingStart="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.218"
