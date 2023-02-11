@@ -18,6 +18,8 @@
             android:name=".activity.ChatsActivity"
             android:exported="true"
 
+            android:icon="@drawable/chaticon"
+
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -9,6 +9,10 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Trace;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.chatacd.R;
@@ -26,6 +31,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,14 +46,15 @@ public class MainActivity extends AppCompatActivity {
 
     private CircularProgressDrawable progressDrawable;
 
-    private Thread hilo1;
-    private Thread hilo2;
+    boolean encendido;
 
     RecyclerView rV;
     RecyclerAdapterConver recAdapter;
 
     private String nombre;
     private String ip;
+    private int puerto;
+    ServerSocket servidor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         conversacion = "";
         mensaje = null;
-
+        puerto = 2023;
         Intent i = getIntent();
 
         nombre = i.getStringExtra("nombre");
@@ -97,58 +104,83 @@ public class MainActivity extends AppCompatActivity {
         btnEnviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                enviarMensaje(hilo2);
+                enviarMensaje();
             }
         });
-        recibirMensaje(hilo1);
+
+        recibirMensaje();
 
         btnAtras.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
+
             }
         });
 
-        ActionBar ac = getSupportActionBar();
-        if(ac != null){
-            ac.setDisplayHomeAsUpEnabled(true);
-        }
+        btnEnviar.setVisibility(View.GONE);
+
+        mensaje_env.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.toString().isEmpty()) {
+                    btnEnviar.setVisibility(View.GONE);
+                } else {
+                    btnEnviar.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void abridSocket(){
+        encendido = true;
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_ENTER){
-            enviarMensaje(hilo2);
+            enviarMensaje();
         }
         return true;
     }
 
-    public void recibirMensaje(Thread hilo1){
+    public void recibirMensaje(){
 
-        hilo1 = new Thread(new Runnable() {
+        encendido = true;
+
+        Thread hilo1 = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    ServerSocket servidor = new ServerSocket(2023);
-                    while(true){
-                        Socket misocket = servidor.accept();
-                        DataInputStream dis = new DataInputStream(misocket.getInputStream());
+                    servidor = new ServerSocket(puerto);
+                    while(encendido){
+                        Socket serverSocket = servidor.accept();
+                        DataInputStream dis = new DataInputStream(serverSocket.getInputStream());
 
                         mensaje = dis.readUTF();
-                        recAdapter.listaMensajes.add("2" + mensaje);
+                        Log.d("Mensajeee", "-" + mensaje + "-");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                recAdapter.insertarItem("2" + mensaje);
+                            }
+                        });
 
-                        misocket.close();
+                        serverSocket.close();
+
                     }
+
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -160,34 +192,64 @@ public class MainActivity extends AppCompatActivity {
         rV.scrollToPosition(recAdapter.listaMensajes.size()+1);
     }
 
-    public void enviarMensaje(Thread hilo2){
+    public void enviarMensaje(){
 
-        hilo2 = new Thread(new Runnable() {
+        Thread hilo2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                Scanner sc = new Scanner(System.in);
                 try {
-                    Socket misocket = new Socket(ip,2023);
-                    DataOutputStream dos = new DataOutputStream(misocket.getOutputStream());
+                    Log.d("prueba", "0");
+                    Socket socketCli = new Socket(ip, puerto);
+                    Log.d("prueba","1" + socketCli.toString());
+                    DataOutputStream dos = new DataOutputStream(socketCli.getOutputStream());
+
+                    Log.d("prueba","2" + dos.toString());
                     String mensaje = mensaje_env.getText().toString();
+                    Log.d("prueba","3" + mensaje);
 
-                    recAdapter.listaMensajes.add("1" +mensaje);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            recAdapter.insertarItem("1" + mensaje);
+                        }
+                    });
+
                     dos.writeUTF(mensaje);
-
                     dos.close();
+                    socketCli.close();
 
-                    misocket.close();
-
+                } catch (UnknownHostException ex) {
+                    Log.d("Prueba", "Fallo" + ex.getMessage());
                 } catch (IOException ex) {
-                    System.out.println(ex.getMessage());
+                    Log.d("Prueba", "Fallo" + ex.getMessage());
                 }
             }
         });
         hilo2.start();
-
-        recAdapter.notifyDataSetChanged();
         rV.scrollToPosition(recAdapter.listaMensajes.size()+1);
+
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        encendido = false;
+        try {
+            if (servidor != null && !servidor.isClosed()) {
+                servidor.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!encendido) {
+            abridSocket();
+        }
+    }
 
     @Override
     public void onBackPressed() {

@@ -9,9 +9,10 @@
 
     <Button
         android:id="@+id/btnEnviar"
-        android:layout_width="39dp"
-        android:layout_height="39dp"
-        android:background="@drawable/send_message_chat_icon_177294"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/enviar"
+        android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/txtMiTexto"
@@ -34,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.9" />
+        app:layout_constraintGuide_percent="0.87" />
 
     <EditText
         android:id="@+id/txtMiTexto"
@@ -42,7 +43,8 @@
         android:layout_height="43dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:textColor="#000000"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/formato_caja"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.218"
@@ -63,9 +65,10 @@
         android:layout_height="65dp"
         app:layout_constraintBottom_toTopOf="@+id/rVMensajes"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.083"
+        app:layout_constraintStart_toEndOf="@+id/btnAtras"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.64"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
@@ -76,8 +79,8 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/rVMensajes"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.71"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toEndOf="@+id/imgPerfilInd"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.12" />
 
@@ -88,8 +91,7 @@
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.775"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgPerfilInd"
         app:layout_constraintTop_toBottomOf="@+id/txtNombreChat"
         app:layout_constraintVertical_bias="0.58000004" />
 

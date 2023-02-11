@@ -66,9 +66,7 @@ public class ChatsActivity extends AppCompatActivity {
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 agregarContacto();
-
             }
         });
 
@@ -100,7 +98,6 @@ public class ChatsActivity extends AppCompatActivity {
     }
 
     public void cargarContactos(){
-
         recAdapterChat.listaChats = dbController.getAllContacts();
         recAdapterChat.notifyDataSetChanged();
     }
@@ -118,8 +115,6 @@ public class ChatsActivity extends AppCompatActivity {
         Button aceptar = v.findViewById(R.id.btnConfirmar);
         Button cancelar = v.findViewById(R.id.btnCancelar);
 
-        Context context = this;
-
         aceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,14 +124,16 @@ public class ChatsActivity extends AppCompatActivity {
                 //Llamamos al metodo insert para añadir el usuario a la base de datos
                 if(dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg()) != -1){
 
-                    recAdapterChat.insertarItem(c);
+                    recAdapterChat.listaChats.add(c);
 
                     recAdapterChat.notifyDataSetChanged();
 
                     dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg());
 
                 }else{
+
                     Toast.makeText(getApplicationContext(), "Esa id ya esta registrada", Toast.LENGTH_LONG).show();
+
                 }
 
                 dialog.dismiss();

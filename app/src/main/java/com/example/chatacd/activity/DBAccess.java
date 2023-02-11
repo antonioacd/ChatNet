@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.example.chatacd.model.Contacto;
 
+import java.io.PushbackReader;
 import java.util.ArrayList;
 
 
@@ -34,6 +35,8 @@ public class DBAccess extends SQLiteOpenHelper {
     private static final String UMENSAJE_COLUMN = "mensaje";
 
     private static final String IMAGEN_COLUMN = "imagen";
+
+    //private static final String PUERTO_COLUMN = "puerto";
 
     //Application Context
     private Context mContext;
@@ -103,70 +106,15 @@ public class DBAccess extends SQLiteOpenHelper {
 
         result = db.insert(DB_TABLE_NAME,null,values);
 
-        Log.d("Result: ", ""+result);
-
         //Se cierra la conexión de la base de datos
         db.close();
 
         return result;
     }
-/*
-    public Usuario getDataUser(String usuario){
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        Usuario u = null;
-        String[] cols = new String[]{NOMBRE_COLUMN ,UMENSAJE_COLUMN ,IP_COLUMN, };
 
-        //Un cursor es un tipo de dato que se mueve entre los registros devueltos por una consulta de una base de datos.
-        Cursor c = db.query(DB_TABLE_NAME,cols,IP_COLUMN +" ='"+usuario+"'",null,null,null,null);
+    public ArrayList<Contacto> getAllContacts(){
 
-        if(c.moveToFirst()) {
-
-            u = new Usuario(c.getString(0), c.getString(1), c.getString(2), c.getString(3));
-
-        }
-
-        return u;
-
-    }*/
-
-    public int getUser(String ip, String contrasenia){
-
-        int result = -1;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String[] cols = new String[]{NOMBRE_COLUMN ,UMENSAJE_COLUMN ,IP_COLUMN, IMAGEN_COLUMN};
-
-        //Un cursor es un tipo de dato que se mueve entre los registros devueltos por una consulta de una base de datos.
-        Cursor c = db.query(DB_TABLE_NAME,cols,IP_COLUMN +" ='"+ip+"'",null,null,null,null);
-
-        if(c.moveToFirst()) {
-
-            String contraseniaCogida = c.getString(3);
-
-            if (contraseniaCogida == null || contraseniaCogida.equals(null) || contraseniaCogida == "" || !contraseniaCogida.equals(contrasenia)){
-                result  = 1;
-            }
-
-            if (contrasenia.equals(contraseniaCogida)){
-                result = 0;
-            }
-
-        }
-
-        if(c != null) {
-            c.close();
-        }
-
-        db.close();
-
-        return result;
-        //-1 = no este registrado, 0 = bien, 1 = contraseña incorrecta
-
-    }
-
-        public ArrayList<Contacto> getAllContacts(){
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Contacto> listaContactos = new ArrayList<>();
 
@@ -189,8 +137,6 @@ public class DBAccess extends SQLiteOpenHelper {
             Log.d("ListaCont", listaContactos.toString());
 
         return listaContactos;
-
-
     }
 
     public void Log(String msg){
