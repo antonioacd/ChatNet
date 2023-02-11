@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                                 recA.insertarItem("2" + mensaje);
 
                                 //Subimos los mensajes hasta la ultima posicion
-                                recV.scrollToPosition(recA.listaMensajes.size()+1);
+                                recV.scrollToPosition(recA.listaMensajes.size()-1);
                             }
                         });
 
@@ -207,8 +207,6 @@ public class MainActivity extends AppCompatActivity {
         hilo1.start();
         //Notificamos al Recycler Adapter que se han realizado cambios
         recA.notifyDataSetChanged();
-        //Subimos los mensajes hasta la ultima posicion
-        recV.scrollToPosition(recA.listaMensajes.size()+1);
 
     }
 
@@ -240,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                             eTmensajeEnv.setText("");
 
                             //Subimos los mensajes hasta la ultima posicion
-                            recV.scrollToPosition(recA.listaMensajes.size()+1);
+                            recV.scrollToPosition(recA.listaMensajes.size()-1);
                         }
                     });
 
