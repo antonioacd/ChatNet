@@ -17,8 +17,12 @@ import java.util.ArrayList;
 
 
 /**
+ * <h1>RecyclerAdapterConver</h1>
  *
+ *  Esta clase sera la encargada de implementar los mensajes del chat
+ *  y tendra los metodos para gestionarlos
  */
+
 
 public class RecyclerAdapterConver extends RecyclerView.Adapter<RecyclerAdapterConver.RecyclerHolder>{
 

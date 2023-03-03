@@ -1,9 +1,7 @@
 package com.example.chatacd.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,17 +11,26 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.example.chatacd.R;
 import com.example.chatacd.adapter.RecyclerAdapterChats;
 import com.example.chatacd.model.Contacto;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
+
+
+/**
+ * <h1>ChatsActivity</h1>
+ *
+ *  Esta clase sera la pantalla de chats,
+ *  Donde se podran agregar contactos y al pulsar un contacto nos introducira en la conversacion
+ */
 
 public class ChatsActivity extends AppCompatActivity {
+
+    /**
+     * Declaramos las variables
+     */
 
     private RecyclerView rVChats;
 
@@ -33,36 +40,45 @@ public class ChatsActivity extends AppCompatActivity {
 
     private Button btnAgregar;
 
-    private CircularProgressDrawable progressDrawable;
-
     AlertDialog dialog;
 
     int indice;
-
-    ArrayList<Contacto> listaTemp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chats);
 
-        ArrayList<Contacto> listaChats;
-
+        /**
+         * Inicializamos los componentes de la interfaz
+         */
         btnAgregar = (Button) findViewById(R.id.btnAgregar);
-
         rVChats = (RecyclerView) findViewById(R.id.rvChats);
 
+        /**
+         * Inicializamos el recicler adapter de los chats
+         */
         recAdapterChat = new RecyclerAdapterChats(this);
 
-        //Creamos un LinearLayout para establecer el Layout del recyclerView
+        /**
+         * Creamos un LinearLayout para establecer el Layout del recyclerView
+         */
         LinearLayoutManager layoutManager = new LinearLayoutManager(ChatsActivity.this);
         rVChats.setLayoutManager(layoutManager);
 
-        //Implementamos el recyclerAdapter en el recyclerView
+        /**
+         * Implementamos el recyclerAdapter de los chats en el recyclerView
+         */
         rVChats.setAdapter(recAdapterChat);
 
+        /**
+         * Inicializamos la variable que da acceso a los metodos de la base de datos
+         */
         dbController = new DBAccess(this);
 
+        /**
+         * Implementamos el listener del boton Agregar para añadir un contacto nuevo
+         */
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,8 +86,17 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
 
-        //Cargamos los contactos
+        /**
+         * Llamamos al metodo cargarContactos que medante un metodo de la clase DBAcces
+         * obtendra los datos de los conctactos
+         */
         cargarContactos();
+
+        /**
+         * Implmentamos un listener para el recicler adapter, de manera que
+         * cuando se pulse, se enviara a otra actividad, que sera el chat
+         * individual del contaco
+         */
 
         recAdapterChat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,11 +104,7 @@ public class ChatsActivity extends AppCompatActivity {
                 //Capturamos el indice del elemento seleccionado
                 indice = rVChats.getChildAdapterPosition(view);
 
-                //Iniciamos la nueva actividad, que seria la vista maestra del elemento
                 Intent i = new Intent(ChatsActivity.this, MainActivity.class);
-                //Introducimos comoo srting extra el id de elemento seleccionado, para mas tarde
-                //en esta clase de vista maestra poder realizar una consulta a la appi sobre
-                //este mismo elemento y no tener que cargar todos de nuevo
                 i.putExtra("nombre", recAdapterChat.listaChats.get(indice).getNombre());
                 i.putExtra("ip", recAdapterChat.listaChats.get(indice).getIp());
                 startActivity(i);
@@ -95,11 +116,23 @@ public class ChatsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * <h1>cargarContactos</h1>
+     *
+     * Este metodo actualiza la lista de los chats del recicler adapter
+     * obteniendo los datos de los contactos
+     */
     public void cargarContactos(){
         recAdapterChat.listaChats = dbController.getAllContacts();
         recAdapterChat.notifyDataSetChanged();
     }
 
+    /**
+     * <h1>agregarContacto</h1>
+     *
+     * Este metodo crea un AlertDialog personalizado en el cual podremos introducir un nombre
+     * y su ip para enviar los mensajes a esa ip
+     */
     public void agregarContacto(){
 
         AlertDialog.Builder ventana = new AlertDialog.Builder(this);
@@ -117,9 +150,11 @@ public class ChatsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                //Comprobamos que los campos se hayan rellenado correctamente
                 if (eIp.getText().toString().isEmpty() || eNombre.getText().toString().isEmpty()){
                     Toast.makeText(getApplicationContext(), "Debe rellenar todos los campos", Toast.LENGTH_LONG).show();
                 }else{
+
                     Contacto c = new Contacto(eIp.getText().toString(), eNombre.getText().toString(), "Hola", "https://www.softzone.es/app/uploads-softzone.es/2018/04/guest.png");
 
                     //Llamamos al metodo insert para añadir el usuario a la base de datos
@@ -132,9 +167,7 @@ public class ChatsActivity extends AppCompatActivity {
                         dbController.insert(c.getNombre(), c.getUltimoMensaje(), c.getIp(), c.getImg());
 
                     }else{
-
                         Toast.makeText(getApplicationContext(), "Esa id ya esta registrada", Toast.LENGTH_SHORT).show();
-
                     }
 
                     dialog.dismiss();
@@ -142,6 +175,9 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Si pulsa el boton cancelar se cerrara el alert dialog
+         */
         cancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

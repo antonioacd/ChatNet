@@ -18,6 +18,13 @@ import com.example.chatacd.model.Contacto;
 
 import java.util.ArrayList;
 
+/**
+ * <h1>RecyclerAdapterChats</h1>
+ *
+ *  Esta clase sera la encargada de implementar la lista de los contactos
+ *  y tendra los metodos para gestionarla
+ */
+
 public class RecyclerAdapterChats extends RecyclerView.Adapter<RecyclerAdapterChats.RecyclerHolder02>{
 
     public ArrayList<Contacto> listaChats;
@@ -78,9 +85,6 @@ public class RecyclerAdapterChats extends RecyclerView.Adapter<RecyclerAdapterCh
                 .placeholder(progressDrawable)
                 .error(R.mipmap.ic_launcher)
                 .into(holder.imgPerfil);
-
-        Log.d("Entra", "Se escribe");
-
     }
 
     @Override

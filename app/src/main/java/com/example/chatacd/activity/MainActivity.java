@@ -28,6 +28,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * <h1>MainActivity</h1>
+ *
+ *  Esta clase sera la encargada de gestionar el envio y la recepcion
+ *  de los mensajes en nuestros chats
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     static private int PUERTO = 2023;
@@ -59,6 +66,12 @@ public class MainActivity extends AppCompatActivity {
     //Socket del servidor, lo declaro aqui para poder cerrarlo en el onDestroy()
     ServerSocket servidor;
 
+    /**
+     * El onCreate sera el encargado de inicializar las variables
+     * , asi como de implementar los listener
+     * @param savedInstanceState
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Cogemos el intent para recibir los datos de la conversacion
         Intent i = getIntent();
+
         //Inicializamos el nombre y la y ip con los dtos obtenidos
         nombre = i.getStringExtra("nombre");
         ip = i.getStringExtra("ip");
@@ -156,6 +170,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * <h1>recibirMensaje</h1>
+     *
+     * Este metodo abre un hilo, que se queda en un bucle infinito para recibir
+     * los mensajes
+     */
+
     //Metodo para abrir el servidor y asi poder recibir mensajes
     public void recibirMensaje(){
 
@@ -209,7 +230,12 @@ public class MainActivity extends AppCompatActivity {
         recA.notifyDataSetChanged();
 
     }
-
+    /**
+     * <h1>enviarMensaje</h1>
+     *
+     * Metodo para enviar mensajes al servidor, el cual abre un hilo por cada mensaje que se envia,
+     * pasandole la ip obtenida de la actividad anterior
+     */
     //Metodo para enviar mensajes al servidor
     public void enviarMensaje(){
 
@@ -270,7 +296,13 @@ public class MainActivity extends AppCompatActivity {
         recV.scrollToPosition(recA.listaMensajes.size()+1);
     };
 
-    //Sobreescribimos el metodo onDestroy
+    /**
+     * <h1>onDestroy</h1>
+     *
+     * El metodo onDestroy permite que cuando se elimine la actividad
+     * se cierre el socket del servidor en caso de que no se haya cerrado
+     * para evitar posibles errores
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -287,9 +319,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Cuando seVuelva a la actividad, volvera a estar activada,
-    // realmente no hace falta ya que se vuelve a pasar por el onCreate, ya que se cierra
-    // y luego se abre pero he decidido ponerlo por posibles fallos
+    /**
+     * <h1>onResume</h1>
+     *
+     * Cuando se vuelva a la actividad, volvera a estar activada,
+     * realmente no hace falta ya que se vuelve a pasar por el onCreate, ya que se cierra
+     * y luego se abre pero he decidido ponerlo por posibles fallos
+     */
+
     @Override
     protected void onResume() {
         super.onResume();
